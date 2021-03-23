@@ -30,6 +30,7 @@ const PostComment = ({ id, createdBy, createdAt }) => {
     if (newComment) {
       await home.doc(id).collection("comment").doc().set({
         whoPostedThis: newComment.uid,
+        shown: false,
         postComment,
         timePosted: new Date().toString(),
         timeArranged: new Date().toLocaleString(),

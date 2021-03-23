@@ -3,36 +3,28 @@ import { Link } from "react-router-dom";
 import { app } from "../../base";
 import { AuthContext } from "../AuthUser";
 import AllPostComment from "./AllPostComment";
+import CommentCount from "./CommentCount";
 import PostComment from "./PostComment";
 import WhoPosted from "./WhoPosted";
+import OnlyFewCommit from "./Status";
+import { Button } from "antd";
+import ButtonChnge from "./ButtonChnge";
 
 const home = app.firestore().collection("rent");
+
 const ViewHome = () => {
   const { current } = useContext(AuthContext);
   const [homes, setHomes] = useState([]);
-  const [comments, setComments] = useState([]);
-
-  const ViewAllComment = async () => {
-    await home
-      .doc()
-      .collection("comment")
-      .onSnapshot((snapshot) => {
-        const i = [];
-        snapshot.forEach((doc) => {
-          i.push(doc.data());
-        });
-        setComments(i);
-      });
-  };
 
   const [open, setOpen] = useState(false);
+  const [open1, setOpen1] = useState(false);
 
   const onOpen = () => {
     setOpen(!open);
   };
 
   const getHomes = async () => {
-    await home.orderBy("timeDate", "desc").onSnapshot((snapshot) => {
+    await home.orderBy("createdAt", "desc").onSnapshot((snapshot) => {
       const item = [];
       snapshot.forEach((doc) => {
         item.push({ ...doc.data(), id: doc.id });
@@ -40,6 +32,20 @@ const ViewHome = () => {
       setHomes(item);
       // console.log(homes);
     });
+  };
+
+  const onEditChnage = async (id) => {
+    await home.doc(id).update({
+      available: open,
+    });
+    console.log(id);
+  };
+
+  const onEditChnageCommit = async (id) => {
+    await home.doc(id).update({
+      shown: open1,
+    });
+    console.log(id);
   };
 
   useEffect(() => {
@@ -69,6 +75,7 @@ const ViewHome = () => {
             cost,
             createdBy,
             createdAt,
+            shown,
           }) => (
             <div
               key={id}
@@ -100,7 +107,6 @@ const ViewHome = () => {
                   />
                 </Link>
               </div>
-
               <div
                 style={{
                   textAlign: "left",
@@ -133,7 +139,10 @@ const ViewHome = () => {
                   >
                     comment
                   </label>
-                  <div> 0</div>
+                  <div>
+                    {" "}
+                    <CommentCount id={id} />{" "}
+                  </div>
                 </div>
                 <div>
                   <label
@@ -155,14 +164,12 @@ const ViewHome = () => {
                   </label>
                   <div>
                     {" "}
-                    <div>
-                      {" "}
-                      {available ? (
-                        <div> Available </div>
-                      ) : (
-                        <div> Not Available </div>
-                      )}{" "}
-                    </div>
+                    <ButtonChnge
+                      available={available}
+                      createdBy={createdBy}
+                      id={id}
+                      shown={shown}
+                    />
                   </div>
                 </div>
               </div>
@@ -171,19 +178,30 @@ const ViewHome = () => {
                 createdBy={createdBy}
                 createdAt={createdAt}
               />
-
               <div
                 style={{
                   cursor: "pointer",
                 }}
-                onClick={(id) => {
-                  setOpen(!open);
+                onClick={() => {
+                  setOpen1(!open1);
+                  onEditChnageCommit(id);
+                  console.log("local " + open1);
+                  console.log("firebase " + shown);
                 }}
               >
-                View All Comments id
-              </div>
-
-              {open ? <AllPostComment id={id} createdBy={createdBy} /> : null}
+                View All Comments
+              </div>{" "}
+              {shown ? (
+                <div>
+                  {" "}
+                  <AllPostComment id={id} createdBy={createdBy} />{" "}
+                </div>
+              ) : (
+                <div>
+                  {" "}
+                  <OnlyFewCommit id={id} createdBy={createdBy} />
+                </div>
+              )}{" "}
               <br />
             </div>
           )
@@ -199,3 +217,23 @@ const ViewHome = () => {
 };
 
 export default ViewHome;
+
+// <div>
+//                   <AllPostComment id={id} createdBy={createdBy} />{" "}
+//                 </div>
+
+// {open1 ? <AllPostComment id={id} createdBy={createdBy} /> : null}
+
+// <Button
+//                       onClick={() => {
+//                         setOpen(!open);
+
+//                         onEditChnage(id);
+
+//                         // console.log(id);
+//                         console.log("local " + open);
+//                         console.log("firebase " + available);
+//                       }}
+//                     >
+//                       Chng
+//                     </Button>

@@ -26,6 +26,7 @@ const DisplayCommentName = ({ id, whoPostedThis }) => {
   return (
     <div>
       <div>{thePost && thePost.name}</div>
+      <div></div>
     </div>
   );
 };

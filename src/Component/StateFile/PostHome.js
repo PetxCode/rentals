@@ -109,6 +109,7 @@ const PostHome = () => {
         desc,
         address,
         available,
+        // setAvailable,
         coverImage,
         image,
         image1,

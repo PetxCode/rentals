@@ -3,6 +3,7 @@ import { app } from "../../base";
 import moment from "moment";
 
 const home = app.firestore().collection("user");
+
 const WhoPosted = ({ createdBy, createdAt }) => {
   const [who, setWho] = useState([]);
 
@@ -29,10 +30,11 @@ const WhoPosted = ({ createdBy, createdAt }) => {
         display: "flex",
         marginLeft: "10px",
         marginTop: "10px",
-        marginBottom: "10px",
+        marginBottom: "10px"
       }}
     >
       <div>
+        {" "}
         <img
           src={who && who.avatar}
           alt="image"
@@ -69,3 +71,16 @@ const WhoPosted = ({ createdBy, createdAt }) => {
 };
 
 export default WhoPosted;
+
+// <img
+// src={who && who.avatar}
+// alt="image"
+// style={{
+//   zIndex: "1",
+//   width: "50px",
+//   height: "50px",
+//   borderRadius: "50%",
+//   objectFit: "cover",
+//   border: "4px solid white",
+// }}
+// />

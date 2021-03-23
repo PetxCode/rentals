@@ -7,15 +7,15 @@ import DisplayWhoComented from "./DisplayWhoComented";
 const home = app.firestore().collection("rent");
 const homeUser = app.firestore().collection("user");
 
-const AllPostComment = ({ id, createdBy }) => {
+const OnlyFewCommit = ({ id, createdBy }) => {
   const [posts, setPosts] = useState([]);
   const [whoComment, setWhoComment] = useState([]);
-  const [rep, setRep] = useState(false);
 
   const onWhoCommented = async () => {
     const newUser = await app.auth().currentUser;
     if (newUser) {
       await homeUser
+
         .doc(createdBy)
         .get()
         .then((doc) => {
@@ -28,10 +28,11 @@ const AllPostComment = ({ id, createdBy }) => {
     const newUser = await app.auth().currentUser;
     if (newUser) {
       await home
-        .doc(id)
 
+        .doc(id)
         .collection("comment")
         .orderBy("timeArranged", "desc")
+        .limit(1)
         .onSnapshot((snapshot) => {
           const item = [];
           snapshot.forEach((doc) => {
@@ -42,22 +43,9 @@ const AllPostComment = ({ id, createdBy }) => {
     }
   };
 
-  const toShow = async (id) => {
-    await app
-      .firestore()
-      .collection("rent")
-      .doc(id)
-      .collection("comment")
-      .doc(id)
-      .update({
-        shown: rep,
-      });
-  };
-
   useEffect(() => {
     onPostComment();
     onWhoCommented();
-    toShow();
   }, []);
   return (
     <div>
@@ -83,7 +71,6 @@ const AllPostComment = ({ id, createdBy }) => {
                 flexDirection: "column",
                 alignItems: "flex-start",
                 textAlign: "left",
-                overflow: "hidden",
               }}
             >
               <div
@@ -105,27 +92,10 @@ const AllPostComment = ({ id, createdBy }) => {
                   style={{
                     fontSize: "10px",
                     fontWeight: "bold",
-                    marginRight: "5px",
+                    marginRight: "10px",
                   }}
                 >
                   <DisplayCommentName whoPostedThis={whoPostedThis} id={id} />
-                </div>
-
-                <div
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: "10px",
-                    marginRight: "5px",
-                    cursor: "pointer",
-                    color: "red",
-                  }}
-                  onClick={() => {
-                    setRep(!rep);
-                    toShow(id);
-                  }}
-                >
-                  {" "}
-                  Reply{" "}
                 </div>
 
                 <div
@@ -149,7 +119,6 @@ const AllPostComment = ({ id, createdBy }) => {
                   {moment(timePosted).fromNow()}
                 </div>
               </div>
-              {rep ? <div> reply </div> : null}
             </div>
           </div>
         ))}
@@ -158,4 +127,4 @@ const AllPostComment = ({ id, createdBy }) => {
   );
 };
 
-export default AllPostComment;
+export default OnlyFewCommit;

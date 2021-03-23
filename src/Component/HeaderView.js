@@ -29,7 +29,7 @@ const HeaderView = () => {
           Home
         </Link>
         <Link
-          to="/"
+          to="/image"
           style={{
             color: "white",
             fontWeightL: "bold",
@@ -37,7 +37,7 @@ const HeaderView = () => {
             textTransform: "uppercase",
           }}
         >
-          Home
+          Image Preview
         </Link>
         <Link
           to="/"
